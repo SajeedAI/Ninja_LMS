@@ -5,6 +5,8 @@ from django.contrib.auth import login
 from .forms import ModuleForm, UserAssignmentForm, UserRegistrationForm
 from .models import Module, UserAssignment
 
+# http://127.0.0.1:8000/modules/register/
+# path('register/', views.register_user, name='register'),
 def register_user(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -23,7 +25,13 @@ def register_user(request):
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'register.html', {'form': form})
+    # Fetch all users and pass them to the template
+    users = User.objects.all()
+
+    return render(request, 'register.html', {'form': form, 'users': users})
+
+def home(request):
+    return render(request, 'base.html')
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse

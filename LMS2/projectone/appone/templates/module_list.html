@@ -1,20 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Module List</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
     <h1>Modules</h1>
+    
+    <!-- Add New Module link -->
     <a href="{% url 'module_add' %}">Add New Module</a>
+    
+    <!-- List of Modules -->
     <ul>
         {% for module in modules %}
             <li>
                 <a href="{% url 'module_detail' module.pk %}">{{ module.id }}</a>
-                <a href="{% url 'module_detail' module.pk %}">{{ module.title }}</a> 
-                (<a href="{% url 'module_edit' module.pk %}">Edit</a> |
-                <a href="{% url 'module_delete' module.pk %}">Delete</a>)
+                <a href="{% url 'module_detail' module.pk %}">{{ module.title }}</a>
+                
+                <!-- Edit and Delete links only visible for admin users -->
+                {% if request.user.is_superuser %}
+                    (<a href="{% url 'module_edit' module.pk %}">Edit</a> |
+                    <a href="{% url 'module_delete' module.pk %}">Delete</a>)
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('register/', views.register_user, name='register'),
+    path('home/', views.home, name='home'),
     path('login/', auth_views.LoginView.as_view(), name='login'),  # Django's built-in login view
     path('modules/', views.module_list, name='module_list'),
     path('modules/add/', views.module_add, name='module_add'),

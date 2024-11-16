@@ -1,9 +1,17 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
 {% block content %}
-<h2>Register</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+    <h1>Registration</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
+
+    <h2>All Users</h2>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.username }} (ID: {{ user.id }})</li>
+        {% endfor %}
+    </ul>
 {% endblock %}
