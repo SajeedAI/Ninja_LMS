@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assign Module to User</title>
+</head>
+<body>
+    <h1>Assign Module to User</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Assign</button>
+    </form>
+    <a href="{% url 'user_assignment_list' %}">Cancel</a>
+</body>
+</html>

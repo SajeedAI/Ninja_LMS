@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>User Assignments</h1>
+
+    <!-- Button to redirect to the modules page -->
+    <a href="http://127.0.0.1:8000/modules/modules/">
+        <button>Go to Modules</button>
+    </a>
+
+    <a href="{% url 'user_assignment_add' %}">Add New Assignment</a>
+    <ul>
+        {% for assignment in user_assignments %}
+            <li>{{ assignment.user.id }} - {{ assignment.user.username }} - {{ assignment.module.title }} - {{ assignment.module.description }}
+                {% if request.user.is_superuser %}
+                    <!-- Only show Edit and Delete links if the user is an admin -->
+                    (<a href="{% url 'user_assignment_edit' assignment.pk %}">Edit</a>)
+                    (<a href="{% url 'user_assignment_delete' assignment.pk %}">Delete</a>)
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
