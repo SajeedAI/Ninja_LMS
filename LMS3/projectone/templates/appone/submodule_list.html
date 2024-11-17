@@ -1,18 +1,137 @@
-{% extends 'appone/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submodules - Learning Platform</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f6fa;
+      font-family: 'Arial', sans-serif;
+    }
 
-{% block content %}
-    <h2>Sub Module {{ module.title }}</h2>
+    h2, h4 {
+      color: #2c3e50;
+    }
 
-    <a href="{% url 'submodule_create' module_id=module.id %}" class="btn btn-primary">Create Submodule</a>
+    .card {
+      border-radius: 15px;
+      background-color: #ffffff;
+      border: 1px solid #ececec;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-    <h4>Modules</h4>
-    {% if submodules %}
-        <ul>
-        {% for submodule in submodules %}
-            <li>{{ submodule.id }}: {{ submodule.title }}: {{ submodule.topic }} - <a href="{{ submodule.video_link }}">Watch Video</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No submodules found for this module.</p>
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-body {
+      text-align: center;
+    }
+
+    .btn-success {
+      background-color: #16a085;
+      border-color: #16a085;
+      padding: 0.7rem 2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .btn-success:hover {
+      background-color: #1abc9c;
+    }
+
+    .modal-content {
+      border-radius: 15px;
+    }
+  </style>
+</head>
+<body>
+    {% extends 'appone/base.html' %}
+
+    {% block title %}Create SubModule{% endblock %}
+    
+    {% block content %}
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Submodules for {{ module.title }}</h2>
+
+    {% if request.user.is_superuser %}
+      <div class="text-center mb-4">
+        <a href="{% url 'submodule_create' module.id %}" class="btn btn-primary">Add Submodule</a>
+      </div>
     {% endif %}
-{% endblock %}
+
+    <div class="row">
+      {% for submodule in submodules %}
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              Day {{ submodule.id }}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ submodule.title }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ submodule.topic }}</h6>
+              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#videoModal" data-video="{{ submodule.video_link }}">
+                Watch Video
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if not submodules %}
+      <p class="text-center text-muted mt-4">No submodules available.</p>
+    {% endif %}
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="videoModalLabel">Watch Video</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <iframe id="videoIframe" src="" frameborder="0" allowfullscreen style="width: 100%; height: 400px;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var videoModal = document.getElementById('videoModal');
+      var videoIframe = document.getElementById('videoIframe');
+
+      videoModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var videoLink = button.getAttribute('data-video');
+
+        if (videoLink.includes("youtube.com")) {
+          videoIframe.src = videoLink.replace("watch?v=", "embed/");
+        } else if (videoLink.includes("drive.google.com")) {
+          var fileID = videoLink.split("/d/")[1].split("/")[0];
+          videoIframe.src = "https://drive.google.com/file/d/" + fileID + "/preview";
+        } else if (videoLink.includes("vimeo.com")) {
+          var videoID = videoLink.split("/").pop();
+          videoIframe.src = "https://player.vimeo.com/video/" + videoID;
+        } else {
+          videoIframe.src = videoLink;
+        }
+      });
+
+      videoModal.addEventListener('hidden.bs.modal', function () {
+        videoIframe.src = "";
+      });
+    });
+  </script>
+  {% endblock %}
+</body>
+
+</html>

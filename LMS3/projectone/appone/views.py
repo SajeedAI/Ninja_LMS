@@ -28,8 +28,12 @@ def module_list(request):
         # Assuming userassignment is a related field to track module access
         modules = Module.objects.filter(userassignment__user=request.user)
 
-    return render(request, 'appone/module_list.html', {'modules': modules})
+    # Get total user count
+    total_users = User.objects.count()
 
+    return render(request, 'appone/module_list.html', {'modules': modules, 'total_users': total_users})
+
+@user_passes_test(lambda user: user.is_superuser)
 def module_create(request):
     if request.method == 'POST':
         form = ModuleForm(request.POST)
@@ -40,6 +44,7 @@ def module_create(request):
         form = ModuleForm()
     return render(request, 'appone/module_form.html', {'form': form})
 
+@user_passes_test(lambda user: user.is_superuser)
 def module_update(request, pk):
     module = get_object_or_404(Module, pk=pk)
     if request.method == 'POST':
@@ -51,6 +56,7 @@ def module_update(request, pk):
         form = ModuleForm(instance=module)
     return render(request, 'appone/module_form.html', {'form': form})
 
+@user_passes_test(lambda user: user.is_superuser)
 def module_delete(request, pk):
     module = get_object_or_404(Module, pk=pk)
     if request.method == 'POST':
@@ -60,6 +66,7 @@ def module_delete(request, pk):
 
 # SUBMODULE CRUD
 def submodule_list(request, module_id):
+    print("submodule_list")
     # Retrieve the module based on the provided module_id
     module = get_object_or_404(Module, id=module_id)
 
@@ -69,6 +76,7 @@ def submodule_list(request, module_id):
     # Render the submodules in the template
     return render(request, 'appone/submodule_list.html', {'module': module, 'submodules': submodules})
 
+@user_passes_test(lambda user: user.is_superuser)
 def submodule_create(request, module_id):
     # Get the module object based on the module_id from the URL
     module = get_object_or_404(Module, id=module_id)
@@ -89,6 +97,7 @@ def submodule_create(request, module_id):
 
     return render(request, 'appone/submodule_form.html', {'form': form, 'module': module})
 
+@user_passes_test(lambda user: user.is_superuser)
 def submodule_update(request, pk):
     submodule = get_object_or_404(SubModule, pk=pk)
     if request.method == 'POST':
@@ -101,6 +110,7 @@ def submodule_update(request, pk):
     return render(request, 'appone/submodule_form.html', {'form': form})
 
 # views.py
+@user_passes_test(lambda user: user.is_superuser)
 def submodule_create(request, module_id):
     module = get_object_or_404(Module, id=module_id)
     form = SubModuleForm(request.POST or None)
@@ -113,6 +123,7 @@ def submodule_create(request, module_id):
 
 
 # USER ASSIGNMENT CRUD
+@user_passes_test(lambda user: user.is_superuser)
 def user_assignments(request):
      # Fetch user assignments for the logged-in user
     assignments = UserAssignment.objects.filter(user=request.user)
@@ -134,9 +145,11 @@ def user_assignments(request):
 #     return render(request, 'appone/user_assignments.html', {'assignments': assignments})
 
 @login_required
+@user_passes_test(lambda user: user.is_superuser)
 def user_assignment_list(request):
     # Fetch user assignments for the logged-in user
     assignments = UserAssignment.objects.all()
+    assignment_count = assignments.count()  # Get the count of assignments
     print(f"Assignments: {assignments}")  # Debugging: Check if assignments are being fetched
 
     # Fetch all modules
@@ -146,11 +159,13 @@ def user_assignment_list(request):
     # Render the template with both assignments and modules
     return render(request, 'appone/user_assignments.html', {
         'assignments': assignments,
+        'assignment_count': assignment_count,
         'modules': modules,
     })
 
 from .forms import UserAssignmentForm  # Make sure this form exists
 @login_required  # Ensure that only authenticated users can access this
+@user_passes_test(lambda user: user.is_superuser)
 def user_assignment_create(request):
     print("user_assignment_create")
     if request.method == 'POST':
@@ -164,6 +179,7 @@ def user_assignment_create(request):
     return render(request, 'appone/create.html', {'form': form})
 
 @login_required
+@user_passes_test(lambda user: user.is_superuser)
 def user_assignment_delete(request, pk):
     assignment = get_object_or_404(UserAssignment, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -172,12 +188,14 @@ def user_assignment_delete(request, pk):
     return render(request, 'appone/user_assignment_confirm_delete.html', {'assignment': assignment})
 
 @login_required
+@user_passes_test(lambda user: user.is_superuser)
 def assign_module(request, module_id):
     module = get_object_or_404(Module, id=module_id)
     UserAssignment.objects.get_or_create(user=request.user, module=module)
     return redirect('user_assignments')
 
 @login_required  # Ensure the user is logged in before they can see the assignments
+@user_passes_test(lambda user: user.is_superuser)
 def assignment_list(request):
     # Retrieve assignments for the logged-in user
     assignments = UserAssignment.objects.filter(user=request.user)
@@ -185,6 +203,7 @@ def assignment_list(request):
     # Render the assignments in the template
     return render(request, 'appone/user_assignments.html', {'assignments': assignments})
 
+@user_passes_test(lambda user: user.is_superuser)
 def submodule_delete(request, pk):
     submodule = get_object_or_404(SubModule, pk=pk)
     if request.method == 'POST':
@@ -192,8 +211,23 @@ def submodule_delete(request, pk):
         return redirect('submodule_list', module_id=submodule.main_module.id)
     return render(request, 'appone/submodule_confirm_delete.html', {'submodule': submodule})
 
+from django.db.models import Count
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import login
+from .forms import UserRegistrationForm
+from .models import UserAssignment
+
+from django.db.models import Count
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import login
+from .forms import UserRegistrationForm
+from .models import UserAssignment
+
+@user_passes_test(lambda user: user.is_superuser)
 def register_user(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -211,13 +245,16 @@ def register_user(request):
             # Log the user in
             login(request, user)
 
-            # Redirect to a new page after successful registration, e.g., the module list
-            return redirect('module_list')  # Change to appropriate redirect target
+            # Redirect to a new page after successful registration
+            return redirect('login')  # Change to appropriate redirect target
     else:
         form = UserRegistrationForm()
 
-    # Render the registration form template
-    return render(request, 'appone/register.html', {'form': form})
+    # Get the count of users assigned to each module
+    module_user_counts = UserAssignment.objects.values('module').annotate(user_count=Count('user')).order_by('-user_count')
+
+    # Render the registration form template along with the module user count information
+    return render(request, 'appone/register.html', {'form': form, 'module_user_counts': module_user_counts})
 
 def home(request):
     return render(request, 'appone/base.html')

@@ -1,9 +1,13 @@
-{% extends 'appone/base.html' %}  <!-- Inherit from base.html -->
+{% extends 'appone/base.html' %}
 
 {% block content %}
-
     <main>
         <div class="container">
+            <h1>User Assignments</h1>
+            
+            <!-- Display the assignment count -->
+            <p>Total Assignments: {{ assignment_count }}</p>  <!-- This should now print the count -->
+            
             <h2>Create a new assignment</h2>
             <form method="post">
                 {% csrf_token %}
