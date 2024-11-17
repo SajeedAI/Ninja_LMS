@@ -1,0 +1,18 @@
+{% extends 'appone/base.html' %}
+
+{% block content %}
+    <h2>Sub Module {{ module.title }}</h2>
+
+    <a href="{% url 'submodule_create' module_id=module.id %}" class="btn btn-primary">Create Submodule</a>
+
+    <h4>Modules</h4>
+    {% if submodules %}
+        <ul>
+        {% for submodule in submodules %}
+            <li>{{ submodule.id }}: {{ submodule.title }}: {{ submodule.topic }} - <a href="{{ submodule.video_link }}">Watch Video</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No submodules found for this module.</p>
+    {% endif %}
+{% endblock %}

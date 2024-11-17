@@ -1,0 +1,16 @@
+{% extends 'appone/base.html' %}
+
+{% block title %}Create SubModule{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ form.instance.pk|default:"Create SubModule" }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'submodule_list' module_id=module.id %}" class="btn btn-secondary">Cancel</a>
+       
+    </form>
+</div>
+{% endblock %}

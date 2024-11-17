@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Learning Platform</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Learning Platform</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'module_list' %}">Modules</a>
+            <a href="{% url 'module_create' %}">Create Module</a>
+            <a href="{% url 'user_assignment_create' %}">Assign Module</a>
+            <a href="{% url 'user_assignment_list' %}">Assignments</a>
+            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'login' %}">Logout</a>
+            
+            <!-- Display logged-in user's name -->
+            {% if user.is_authenticated %}
+                <span>Welcome, {{ user.username }}!</span>
+            {% else %}
+                <span>Welcome, Guest!</span>
+            {% endif %}
+            
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
