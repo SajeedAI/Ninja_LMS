@@ -171,24 +171,33 @@ def user_assignment_set(request):
 @login_required
 @user_passes_test(lambda user: user.is_superuser)
 def user_assignment_list(request):
-
-    print("user_assignment_list: user_assignment_list: this is for admin")
+    print("user_assignment_list: this is for admin")
     
-    # Fetch user assignments for the logged-in user
+    # Fetch all user assignments
     assignments = UserAssignment.objects.all()
-    assignment_count = assignments.count()  # Get the count of assignments
-   
-    # Fetch all modules
     modules = Module.objects.all()
-
     submodules = SubModule.objects.all()
 
-    # Render the template with both assignments and modules
+    # Paginate assignments
+    assignments_paginator = Paginator(assignments, 10)  # Show 10 assignments per page
+    assignments_page_number = request.GET.get('assignments_page')
+    assignments_page_obj = assignments_paginator.get_page(assignments_page_number)
+
+    # Paginate modules
+    modules_paginator = Paginator(modules, 10)  # Show 10 modules per page
+    modules_page_number = request.GET.get('modules_page')
+    modules_page_obj = modules_paginator.get_page(modules_page_number)
+
+    # Paginate submodules
+    submodules_paginator = Paginator(submodules, 10)  # Show 10 submodules per page
+    submodules_page_number = request.GET.get('submodules_page')
+    submodules_page_obj = submodules_paginator.get_page(submodules_page_number)
+
+    # Render the template with paginated objects
     return render(request, 'appone/user_assignment_list.html', {
-        'assignments': assignments,
-        'assignment_count': assignment_count,
-        'modules': modules,
-        'submodules':submodules
+        'assignments': assignments_page_obj,
+        'modules': modules_page_obj,
+        'submodules': submodules_page_obj,
     })
 
 # @user_passes_test(lambda user: user.is_superuser)
