@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
@@ -8,17 +9,78 @@
     <!-- Link to Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            background-image: url("{% static 'images/2.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        * {
+            font-size: 12px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        body,
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        main {
+            flex: 1;
+            /* Makes the main content grow to fill the available space */
+        }
+
+        footer {
+            background-color: black;
+            text-align: center;
+            padding: 10px 0;
+            color: white;
+        }
+
+        nav {
+            background-color: black;
+        }
+
+        .nav-link {
+            color: white;
+        }
+
+        .nav-link:hover {
+            color: #0e55b9;
+            /* Light gray on hover */
+            background-color: transparent;
+            /* Remove background color on hover */
+        }
+
+        /* Optional: To add a smooth transition */
+        .nav-link {
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+    </style>
 </head>
+
 <body>
     <!-- Fixed Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Learning Platform</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- <a class="navbar-brand" href="{% url 'home' %}">Learning Platform</a> -->
+            <img src="{% static 'images/logo.png' %}" alt="" width="160px">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    {% if request.user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'home' %}">Home</a>
                     </li>
@@ -29,14 +91,18 @@
                         <a class="nav-link" href="{% url 'module_create' %}">Create Module</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_assignment_create' %}">Assign Module</a>
+                        <a class="nav-link" href="{% url 'user_assignment_set' %}">Assign Module</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'user_assignment_list' %}">Assignments</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_users' %}">Registered Users</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'register' %}">Register</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Logout</a>
                     </li>
@@ -57,7 +123,7 @@
     </main>
 
     <!-- Footer Section -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
+    <footer>
         <p>&copy; 2024 Learning Platform</p>
     </footer>
 
@@ -65,4 +131,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
+
 </html>

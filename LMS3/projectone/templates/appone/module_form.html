@@ -1,10 +1,22 @@
 {% extends 'appone/base.html' %}
 {% block content %}
-{% load static %}
-<h2>Create/Update Module</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+<div class="container mt-5">
+    <h1 class="text-center text-primary mb-4">Create Module</h1>
+    
+    <!-- Back Button -->
+    <a href="{% url 'module_list' %}" class="btn btn-secondary mb-3">Back to Module List</a>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Title:</label>
+            <input type="text" name="title" id="{{ form.title.id_for_label }}" class="form-control" value="{{ form.title.value }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description:</label>
+            <textarea name="description" id="{{ form.description.id_for_label }}" class="form-control" required>{{ form.description.value }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
 {% endblock %}

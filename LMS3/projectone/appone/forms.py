@@ -13,12 +13,14 @@ class SubModuleForm(forms.ModelForm):
         model = SubModule
         fields = ['title', 'description', 'main_module', 'topic', 'video_link']
        
-
 class UserAssignmentForm(forms.ModelForm):
     class Meta:
         model = UserAssignment
-        fields = ['user', 'module']  # Include the necessary fields from your model
-
+        fields = ['user', 'module']
+        widgets = {
+            'user': forms.Select(attrs={'class': 'form-control'}),
+            'module': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
