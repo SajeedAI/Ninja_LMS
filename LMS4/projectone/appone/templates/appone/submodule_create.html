@@ -1,0 +1,66 @@
+{% extends 'appone/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Create SubModule{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ form.instance.pk|default:"Create SubModule" }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <table class="table table-bordered">
+            <tbody>
+                <!-- Title Field -->
+                <tr>
+                    <td><label for="id_title" class="form-label">Title</label></td>
+                    <td>{{ form.title|add_class:"form-control" }}</td>
+                </tr>
+
+                <!-- Description Field -->
+                <tr>
+                    <td><label for="id_description" class="form-label">Description</label></td>
+                    <td>{{ form.description|add_class:"form-control custom-height" }}</td>
+                </tr>
+
+                <!-- Main Module Field -->
+                <tr>
+                    <td><label for="id_main_module" class="form-label">Main Module</label></td>
+                    <td>{{ form.main_module|add_class:"form-select" }}</td>
+                </tr>
+
+                <!-- Topic Field -->
+                <tr>
+                    <td><label for="id_topic" class="form-label">Topic</label></td>
+                    <td>{{ form.topic|add_class:"form-control custom-height" }}</td>
+                </tr>
+
+                <!-- Video Link Field -->
+                <tr>
+                    <td><label for="id_video_link" class="form-label">Video Link</label></td>
+                    <td>{{ form.video_link|add_class:"form-control" }}</td>
+                </tr>
+
+                <!-- Session Field -->
+                <tr>
+                    <td><label for="id_session" class="form-label">Session</label></td>
+                    <td>{{ form.session|add_class:"form-control" }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Submit and Cancel Buttons -->
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'submodule_list' module_id=module.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Custom CSS to reduce the height of description and topic -->
+<style>
+    .custom-height {
+        height: 100px;  /* Adjust the height as needed */
+    }
+</style>
+{% endblock %}

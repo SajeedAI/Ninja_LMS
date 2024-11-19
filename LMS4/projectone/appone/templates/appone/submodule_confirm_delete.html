@@ -1,0 +1,17 @@
+{% extends 'appone/base.html' %}
+
+{% block title %}
+Delete SubModule - Ninja LMS
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Confirm Delete</h2>
+    <p>Are you sure you want to delete the SubModule: <strong>{{ submodule.title }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'submodule_list' module_id=module.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
