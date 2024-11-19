@@ -1,0 +1,16 @@
+<!-- edit_product.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Product</title>
+</head>
+<body>
+    <h2>Edit Product: {{ product.product_name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="product_name">Product Name:</label>
+        <input type="text" name="product_name" value="{{ product.product_name }}" required><br><br>
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>

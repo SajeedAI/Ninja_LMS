@@ -6,28 +6,22 @@
   <title>Sub Modules for {{ main_module.title }}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .video-container {
-      display: none;
-      margin-top: 20px;
-      text-align: center;
-      width: 100%;
-    }
-    .video-container iframe {
-      width: 100%;
-      height: 315px;
+    body {
+      background-color: #f4f7fc;
+      font-family: 'Arial', sans-serif;
     }
 
-    .table th, .table td {
-      vertical-align: middle;
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .card-header {
-      background-color: #007bff;
-      color: white;
-    }
-
-    .card-body {
-      background-color: #f8f9fa;
+    h2 {
+      font-size: 30px;
+      color: #007bff;
+      font-weight: 600;
     }
 
     .btn-primary {
@@ -40,21 +34,66 @@
       border-color: #0056b3;
     }
 
-    .video-card {
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
 
+    .card-header {
+      background-color: #007bff;
+      color: white;
+      font-weight: 600;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .card-body {
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    .btn-link {
+      color: #007bff;
+    }
+
+    .btn-link:hover {
+      text-decoration: underline;
+    }
+
     .modal-content {
-      background-color: #f8f9fa;
+      background-color: #f9f9f9;
+      border-radius: 10px;
     }
 
     .modal-header {
       background-color: #007bff;
       color: white;
+      border-radius: 10px 10px 0 0;
     }
 
     .modal-footer {
       justify-content: center;
+    }
+
+    .text-muted {
+      color: #6c757d;
+    }
+
+    .row {
+      margin-top: 30px;
+    }
+
+    .col-md-4 {
+      margin-bottom: 20px;
+    }
+
+    .d-flex {
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
     }
   </style>
 </head>
@@ -65,40 +104,33 @@
       <a href="{% url 'sub_module_create' main_module.id %}" class="btn btn-primary">Add Sub Module</a>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-striped table-hover shadow-sm">
-        <thead class="table-dark">
-          <tr>
-            <th>Title</th>
-            <th>Topic</th>
-            <th>Video Link</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for submodule in submodules %}
-            <tr>
-              <td>{{ submodule.title }}</td>
-              <td>{{ submodule.topic }}</td>
-              <td>
-                <!-- Store the video link in a data attribute -->
+    <div class="row">
+      {% for submodule in submodules %}
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">{{ submodule.title }}</h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text"><strong>Topic:</strong> {{ submodule.topic }}</p>
+              <p class="card-text"><strong>Video Link:</strong> 
                 <button class="btn btn-link" data-video-url="{{ submodule.video_link }}" onclick="openModal(this)">Watch Video</button>
-              </td>
-              <td>
+              </p>
+              <div class="d-flex">
                 <a href="{% url 'sub_module_update' main_module.id submodule.id %}" class="btn btn-sm btn-warning">Edit</a>
                 <form action="{% url 'sub_module_delete' submodule.id %}" method="post" style="display:inline;">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this submodule?');">Delete</button>
                 </form>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="4" class="text-center text-muted">No submodules available.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12 text-center text-muted">
+          <p>No submodules available.</p>
+        </div>
+      {% endfor %}
     </div>
 
     <p class="text-muted mt-4">Main Module ID: {{ main_module.id }}</p>
@@ -127,33 +159,23 @@
   <script>
     // Function to open the video modal and load the video
     function openModal(button) {
-      // Get the video URL from the data attribute
       var videoLink = button.getAttribute('data-video-url');
       var videoPlayer = document.getElementById('videoPlayer');
 
-      // Ensure the video link is valid
       if (videoLink && videoLink.length > 0) {
-        // Format YouTube link for embedding
         if (videoLink.includes("youtube.com")) {
           videoPlayer.src = videoLink.replace("watch?v=", "embed/");
-        }
-        // Handle Google Drive link
-        else if (videoLink.includes("drive.google.com")) {
+        } else if (videoLink.includes("drive.google.com")) {
           var fileID = videoLink.split("/d/")[1].split("/")[0];
           videoPlayer.src = "https://drive.google.com/file/d/" + fileID + "/preview";
-        }
-        // Handle Vimeo link (with removed logo and buttons)
-        // Handle Vimeo link (with removed logo and buttons)
-        else if (videoLink.includes("vimeo.com")) {
-          var videoID = videoLink.split("/")[3];  // Assuming the URL is in the format https://vimeo.com/VIDEO_ID
-          videoPlayer.src = "https://player.vimeo.com/video/" + videoID + "?title=0&byline=0&portrait=0&badge=0&controls=1";  // Customize player to remove unwanted elements, including logo
-        }
-        else {
+        } else if (videoLink.includes("vimeo.com")) {
+          var videoID = videoLink.split("/")[3];
+          videoPlayer.src = "https://player.vimeo.com/video/" + videoID + "?title=0&byline=0&portrait=0&badge=0&controls=1";
+        } else {
           alert("Unsupported video format.");
           return;
         }
 
-        // Show the modal
         var videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
         videoModal.show();
       } else {
@@ -167,6 +189,5 @@
       videoPlayer.src = "";  // Reset the video source
     }
   </script>
-  
 </body>
 </html>

@@ -1,0 +1,20 @@
+<!-- product_list.html -->
+<h1>Product List</h1>
+
+{% if products %}
+    <ul>
+        {% for product in products %}
+            <li>
+                <strong>{{ product.product_name }}</strong><br>
+
+                <!-- Edit and Delete links (only for admin users) -->
+                {% if request.user.is_superuser %}
+                    <a href="{% url 'edit_product' product.product_id %}">Edit</a> | 
+                    <a href="{% url 'delete_product' product.product_id %}">Delete</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No products available.</p>
+{% endif %}

@@ -1,40 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Drive Video Embed</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .video-container {
-      margin-top: 50px;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    iframe {
-      width: 100%;
-      height: 500px;
-      border: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Users to Module</title>
 </head>
 <body>
+    <h1>Randomly Assign Users to a Module</h1>
 
-  <div class="video-container">
-    <h2>Watch Google Drive Video</h2>
-    <iframe src="https://drive.google.com/file/d/151a7z23kzeEZq-UtLCzLkdUE7SuDK6zE/preview" 
-            allow="autoplay; fullscreen" 
-            frameborder="0" 
-            allowfullscreen>
-    </iframe>
-  </div>
+    <form method="post" action="{% url 'assign_users_to_module' %}">
+        {% csrf_token %}
+        <label for="module">Select Module:</label>
+        <select name="module" id="module">
+            {% for module in modules %}
+                <option value="{{ module.id }}">{{ module.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="num_users">Number of Users to Assign:</label>
+        <input type="number" id="num_users" name="num_users" min="1" required>
+        <br><br>
+
+        <button type="submit">Assign Users</button>
+    </form>
+
+    {% if selected_users %}
+        <h3>Assigned Users:</h3>
+        <ul>
+            {% for user in selected_users %}
+                <li>{{ user.username }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 </body>
 </html>
