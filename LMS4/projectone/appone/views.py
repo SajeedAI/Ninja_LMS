@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import user_passes_test
 # This method is used to fetch the User count
 # This method is used to fetch the SubModule count
 @login_required(login_url='/accounts/login/')
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
 def module_list(request):
     print("module_list: this method is used to fetch all the modules")
 
@@ -49,7 +50,8 @@ def module_list(request):
 
 # Module
 # This method is used to create the module
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def module_create(request):
     print("module_create: this method is used to create the module")
 
@@ -64,7 +66,8 @@ def module_create(request):
 
 # Module
 # This method is used to update the module
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def module_update(request, pk):
     print("module_update: this method is used to update the module")
 
@@ -80,7 +83,8 @@ def module_update(request, pk):
 
 # Module
 # This method is used to delete the module
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def module_delete(request, pk):
 
     print("module_delete: this method is used to delete the module")
@@ -93,6 +97,8 @@ def module_delete(request, pk):
 
 # submodule
 # This method is used to fetch all the submodules from main module
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def submodule_list(request, module_id):
     print("submodule_list: this method is used to fetch all the submodules from main module")
 
@@ -112,7 +118,9 @@ def submodule_list(request, module_id):
     return render(request, 'appone/submodule_list.html', {'module': module, 'submodules': submodules})
 
 # submodule
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
+# @user_passes_test(lambda user: user.is_superuser)
 def submodule_create(request, module_id):
     # Get the module object based on the module_id from the URL
     module = get_object_or_404(Module, id=module_id)
@@ -139,7 +147,8 @@ from django.contrib.auth.decorators import user_passes_test
 from .models import SubModule
 from .forms import SubModuleForm
 
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def submodule_update(request, pk):
     """
     This method is used to update a submodule.
@@ -168,7 +177,8 @@ def submodule_update(request, pk):
     })
 
 # submodule
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def submodule_delete(request, pk):
     """
     This method is used to delete a submodule.
@@ -191,8 +201,8 @@ def submodule_delete(request, pk):
 # user assignment
 # This Method is used to add Module to Specific User Manually
 from .forms import UserAssignmentForm  
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
 @login_required  
-@user_passes_test(lambda user: user.is_superuser)
 def user_assignment_set(request):
 
     print("user_assignment_set: this Method is used to add Module to Specific User Manually")
@@ -208,8 +218,8 @@ def user_assignment_set(request):
     return render(request, 'appone/user_assignment_set.html', {'form': form})
 
 # This method user_assignment_list: this is for admin 
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
 @login_required
-@user_passes_test(lambda user: user.is_superuser)
 def user_assignment_list(request):
     print("user_assignment_list: this is for admin")
     
@@ -240,8 +250,8 @@ def user_assignment_list(request):
         'submodules': submodules_page_obj,
     })
 
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
 @login_required
-@user_passes_test(lambda user: user.is_superuser)
 def user_assignment_delete(request, pk):
     assignment = get_object_or_404(UserAssignment, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -260,32 +270,42 @@ from django.db.models import Count
 from .forms import UserRegistrationForm
 from .models import UserAssignment, Module
 
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def register_user(request):
-    # Default value for module_user_counts
+    # Fetch module user counts for the template
     module_user_counts = UserAssignment.objects.values('module').annotate(user_count=Count('user')).order_by('-user_count')
-    
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            # Save the user object
+            # Save the user object (without committing to the database yet)
             user = form.save(commit=False)
+            
+            # Set the password (hashed)
             user.set_password(form.cleaned_data['password'])
-            user.save()
+
+            # Assign the role based on the selected value from the form
+            role = form.cleaned_data.get('role')
+            if role == 'superuser' or role == 'staff':  # Ensure both superuser and staff have full access
+                user.is_superuser = True
+                user.is_staff = True  # Superusers and staff are both staff in terms of access
+            else:
+                user.is_superuser = False
+                user.is_staff = False  # Regular users have no admin rights
+
+            user.save()  # Commit the user object to the database
 
             # Assign selected modules to the user
             modules = form.cleaned_data['modules']
             for module in modules:
                 UserAssignment.objects.create(user=user, module=module)
 
-            # Log the user in
-            # login(request, user)
-
             # Add a success message
             messages.success(request, 'User registered successfully!')
 
             # Redirect to a dashboard or homepage after successful registration
-            return redirect('register')  # Replace 'home' with the name of the view you want to redirect to
+            return redirect('register')  # Replace 'register' with the name of the view you want to redirect to
     else:
         form = UserRegistrationForm()
 
@@ -305,7 +325,8 @@ from django import forms
 from django.core.paginator import Paginator
 
 # Filter only superusers to access these views
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def manage_users(request):
     # Search functionality
     query = request.GET.get('q')
@@ -327,6 +348,8 @@ def manage_users(request):
     return render(request, 'appone/manage_users.html', {'page_obj': page_obj})
 
 # Form for editing user details
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 class EditUserForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput, required=False, help_text="Leave blank to keep the current password."
@@ -344,7 +367,8 @@ class EditUserForm(forms.ModelForm):
             user.save()
         return user
     
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def edit_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -357,7 +381,8 @@ def edit_user(request, user_id):
 
     return render(request, 'appone/edit_user.html', {'form': form, 'user': user})
 
-@user_passes_test(lambda user: user.is_superuser)
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -365,6 +390,8 @@ def delete_user(request, user_id):
         return redirect('manage_users')  # Redirect to user management page
     return render(request, 'appone/confirm_delete.html', {'user': user})
 
+@user_passes_test(lambda user: user.is_superuser or user.is_staff)
+@login_required
 def home(request):
     return render(request, 'appone/home.html')
 
