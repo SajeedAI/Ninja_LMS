@@ -70,3 +70,20 @@ class UserRegistrationForm(forms.ModelForm):
                 UserAssignment.objects.create(user=user, module=module)
 
         return user
+    
+class EditUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'is_staff', 'is_superuser', 'password']  # Adjust the fields as needed
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Optionally, you can add additional logic here if needed
+        if self.instance.pk:  # When editing an existing user, ensure password is not required
+            self.fields['password'].required = False
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if password:  # If a new password is provided, ensure it's properly hashed
+            return password
+        return None  # If no new password is provided, return None to not alter the existing password

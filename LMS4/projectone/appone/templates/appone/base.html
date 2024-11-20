@@ -103,6 +103,10 @@
                         <a class="nav-link" href="{% url 'register' %}">Register</a>
                     </li>
                     {% endif %}
+                    <!-- Display logged-in username -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Welcome - {{ request.user.username }}</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Logout</a>
                     </li>

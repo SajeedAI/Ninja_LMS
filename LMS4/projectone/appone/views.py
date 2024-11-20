@@ -347,26 +347,7 @@ def manage_users(request):
 
     return render(request, 'appone/manage_users.html', {'page_obj': page_obj})
 
-# Form for editing user details
-@user_passes_test(lambda user: user.is_superuser or user.is_staff)
-@login_required
-class EditUserForm(forms.ModelForm):
-    password = forms.CharField(
-        widget=forms.PasswordInput, required=False, help_text="Leave blank to keep the current password."
-    )
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        if self.cleaned_data['password']:
-            user.set_password(self.cleaned_data['password'])
-        if commit:
-            user.save()
-        return user
-    
+from .forms import EditUserForm
 @user_passes_test(lambda user: user.is_superuser or user.is_staff)
 @login_required
 def edit_user(request, user_id):
