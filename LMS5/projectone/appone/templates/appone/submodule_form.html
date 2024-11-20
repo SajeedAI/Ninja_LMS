@@ -1,0 +1,66 @@
+{% extends 'appone/base.html' %}
+
+{% block title %}Create SubModule{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ form.instance.pk|default:"Create SubModule" }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th scope="row">Title</th>
+                        <td>{{ form.title }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Description</th>
+                        <td class="short-height">{{ form.description }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Main Module</th>
+                        <td>{{ form.main_module }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Topic</th>
+                        <td class="short-height">{{ form.topic }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Video Link</th>
+                        <td>{{ form.video_link }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Session</th>
+                        <td>{{ form.session }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Date Created</th>
+                        <td>{{ form.date_created }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'submodule_list' module_id=module.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% block styles %}
+    <style>
+        /* Custom style to reduce the height of rows for description and topic */
+        .short-height {
+            height: 50px; /* Adjust this value as per your preference */
+            overflow: hidden;
+        }
+
+        .short-height textarea {
+            height: 50px; /* Adjust textarea height */
+            resize: none; /* Optional: Disable textarea resizing */
+        }
+    </style>
+{% endblock %}
+{% endblock %}

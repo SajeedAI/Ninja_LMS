@@ -1,0 +1,49 @@
+{% extends 'appone/base.html' %}
+
+{% block content %}
+<main>
+    <div class="container mt-5">
+        <!-- Page Title -->
+        <h1 class="text-center text-primary mb-4">User Assignments</h1>
+        
+        <!-- Total Assignments Display -->
+        <div class="text-center mb-4">
+            <p class="lead">Total Assignments: <strong>{{ assignment_count }}</strong></p>
+        </div>
+        
+        <!-- Form Card -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0 text-center">Create a New Assignment</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <!-- User Selection -->
+                            <div class="form-group mb-3">
+                                <label for="id_user" class="form-label"><strong>User</strong></label>
+                                {{ form.user }}
+                            </div>
+                            
+                            <!-- Module Selection -->
+                            <div class="form-group mb-3">
+                                <label for="id_module" class="form-label"><strong>Module</strong></label>
+                                {{ form.module }}
+                            </div>
+                            
+                            <!-- Form Buttons -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="submit" class="btn btn-success w-45">Save</button>
+                                <a href="{% url 'user_assignment_set' %}" class="btn btn-secondary w-45">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

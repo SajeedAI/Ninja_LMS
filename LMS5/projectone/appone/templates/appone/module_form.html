@@ -1,0 +1,34 @@
+{% extends 'appone/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-primary mb-4">Create Module</h1>
+    
+    <!-- Back Button -->
+    <a href="{% url 'module_list' %}" class="btn btn-secondary mb-3">Back to Module List</a>
+
+    <form method="post" enctype="multipart/form-data">  <!-- Add enctype -->
+        {% csrf_token %}
+        
+        <!-- Title Field -->
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Title:</label>
+            <input type="text" name="title" id="{{ form.title.id_for_label }}" class="form-control" value="{{ form.title.value }}" required>
+        </div>
+
+        <!-- Description Field -->
+        <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description:</label>
+            <textarea name="description" id="{{ form.description.id_for_label }}" class="form-control" required>{{ form.description.value }}</textarea>
+        </div>
+
+        <!-- Image Field -->
+        <div class="mb-3">
+            <label for="{{ form.image.id_for_label }}" class="form-label">Image:</label>
+            <input type="file" name="image" id="{{ form.image.id_for_label }}" class="form-control">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}

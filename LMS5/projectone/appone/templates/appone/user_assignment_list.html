@@ -1,0 +1,159 @@
+{% extends 'appone/base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- User Assignments Section -->
+    <h2 class="text-center text-primary mb-4">User Assignments</h2>
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Module ID</th>
+                <th>User ID</th>
+                <th>Assignment ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if assignments %}
+                {% for assignment in assignments %}
+                    <tr>
+                        <td>{{ assignment.module_id }}</td>
+                        <td>{{ assignment.user_id }}</td>
+                        <td>{{ assignment.id }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No assignments available</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    
+    <!-- User Assignments Pagination -->
+    <div class="d-flex justify-content-center">
+        <nav style="background-color: white;">
+            <ul class="pagination">
+                {% if assignments.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?assignments_page={{ assignments.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ assignments.number }}</span></li>
+                {% if assignments.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?assignments_page={{ assignments.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <hr>
+
+    <!-- Modules Section -->
+    <h2 class="text-center text-primary mb-4">Modules</h2>
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Module ID</th>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if modules %}
+                {% for module in modules %}
+                    <tr>
+                        <td>{{ module.id }}</td>
+                        <td>{{ module.title }}</td>
+                        <td>{{ module.date_created }}</td>
+                        <td>{{ module.description }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No modules available</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    
+    <!-- Modules Pagination -->
+    <div class="d-flex justify-content-center">
+        <nav style="background-color: white;">
+            <ul class="pagination">
+                {% if modules.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?modules_page={{ modules.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ modules.number }}</span></li>
+                {% if modules.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?modules_page={{ modules.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <hr>
+
+    <!-- Submodules Section -->
+    <h2 class="text-center text-primary mb-4">Submodules</h2>
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Sub Module ID</th>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Topic</th>
+                <th>Video Link</th>
+                <th>Module ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if submodules %}
+                {% for submodule in submodules %}
+                    <tr>
+                        <td>{{ submodule.id }}</td>
+                        <td>{{ submodule.title }}</td>
+                        <td>{{ submodule.date_created }}</td>
+                        <td>{{ submodule.description }}</td>
+                        <td>{{ submodule.topic }}</td>
+                        <td>
+                            <a href="{{ submodule.video_link }}" target="_blank" class="btn btn-sm btn-primary">Watch Video</a>
+                        </td>
+                        <td>{{ submodule.main_module_id }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No submodules available</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    
+    <!-- Submodules Pagination -->
+    <div class="d-flex justify-content-center">
+        <nav style="background-color: white;">
+            <ul class="pagination">
+                {% if submodules.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?submodules_page={{ submodules.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ submodules.number }}</span></li>
+                {% if submodules.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?submodules_page={{ submodules.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
