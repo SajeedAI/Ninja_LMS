@@ -23,13 +23,17 @@ urlpatterns = [
     path('submodule/delete/<int:pk>/', SubModuleDeleteView.as_view(), name='submodule_delete'),
 
     path('user-assignment/list/', UserAssignmentListView.as_view(), name='user_assignment_list'),
-    path('user_assignment/delete/<int:pk>/', UserAssignmentDeleteView.as_view(), name='user_assignment_delete'),
     path('user-assignment/set/', UserAssignmentSetView.as_view(), name='user_assignment_set'),
+    path('user_assignment/delete/<int:pk>/', UserAssignmentDeleteView.as_view(), name='user_assignment_delete'),
+   
     path('register/', RegisterUserView.as_view(), name='register'),
     path('manage_users/', ManageUsersView.as_view(), name='manage_users'),
     path('manage_users/edit/<int:pk>/', EditUserView.as_view(), name='edit_user'),
     path('manage_users/delete/<int:pk>/', DeleteUserView.as_view(), name='delete_user'),
-    path('accounts/', include('django.contrib.auth.urls')),  # Includes login, logout, etc.
-    path('login/', LoginView.as_view(), name='login'),  # Custom login path
+    
     path('home/', HomeView.as_view(), name='home'),
+    
+    path('accounts/', include('django.contrib.auth.urls')),  # Includes login, logout, etc.
+    path('', LoginView.as_view(), name='login'),  # Custom login path
+    
 ]
