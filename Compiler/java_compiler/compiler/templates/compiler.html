@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Online Compiler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Java Online Compiler</h1>
+        <div class="card shadow mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Write Your Java Code</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{% url 'run_java_code' %}">
+                    {% csrf_token %}
+                    <textarea id="codeEditor" class="form-control" rows="10" name="code">// Write your Java code here
+public class Simple {
+    public static void main(String[] args) {
+        System.out.println("Hello, Java!");
+    }
+}
+                </textarea>
+                    <button type="submit" class="btn btn-primary mt-3">Run Code</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow mt-4">
+            <div class="card-header bg-success text-white">
+                <h5>Output</h5>
+            </div>
+            <div class="card-body">
+                <pre id="output"
+                    class="bg-light p-3 rounded">{{ output|default:"Click 'Run Code' to see the output here." }}</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

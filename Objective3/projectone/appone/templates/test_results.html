@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Test Results</h1>
+    <p>Total Questions: {{ total_questions }}</p>
+    <p>Correct Answers: {{ correct_answers }}</p>
+    <p>Incorrect Answers: {{ incorrect_answers }}</p>
+    <ul>
+        {% for response in responses %}
+        <li>
+            Question: {{ response.question.text }}<br>
+            Your Answer: {{ response.selected_option }} - 
+            {% if response.is_correct %}Correct{% else %}Incorrect{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

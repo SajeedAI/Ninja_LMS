@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Available Tests</h1>
+<ul>
+    {% for week in weeks %}
+    <li><a href="{% url 'take_test' week.id %}">{{ week.name }}</a></li>
+    {% empty %}
+    <li>No tests available at the moment.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
